@@ -212,7 +212,7 @@ http://localhost:3000/api
 **Request Body (User):**
 ```json
 {
-  "status": "pending" | "in-progress" | "completed"
+  "status": "pending" | "completed"
 }
 ```
 > ⚠️ Users can only update the `status` field. Attempting to update other fields returns a 403 error.
@@ -261,48 +261,38 @@ http://localhost:3000/api
 
 ## 📊 Scalability Considerations
 
-### 1. Microservices Architecture
-- **Auth Service**: Separate authentication service with its own database
-- **Task Service**: Independent task management service
-- **API Gateway**: Central entry point for routing, rate limiting, and load balancing
+As the application grows, here are some ways to handle more users and data:
 
-### 2. Caching Strategy
-- **Redis Integration**: Cache frequently accessed data (user sessions, task lists)
-- **Query Caching**: Implement MongoDB query result caching
-- **HTTP Caching**: Use ETag and Cache-Control headers for API responses
+### 1. Database Indexing
+Add indexes to frequently searched fields like `username` and `assignedTo` to speed up queries.
+
+### 2. Caching
+Store frequently accessed data (like user sessions or task lists) in memory using tools like Redis to reduce database load.
 
 ### 3. Load Balancing
-- **Horizontal Scaling**: Run multiple instances behind a load balancer (NGINX, AWS ELB)
-- **Containerization**: Docker containers orchestrated with Kubernetes
-- **Auto-scaling**: Scale based on CPU/memory usage or request count
+Run multiple copies of the backend server and use a load balancer (like NGINX) to distribute traffic evenly across them.
 
-### 4. Database Optimization
-- **Indexing**: Add indexes on frequently queried fields (username, assignedTo)
-- **Sharding**: Distribute data across multiple MongoDB shards
-- **Read Replicas**: Use replica sets for read-heavy workloads
+### 4. Separating Services
+Split the application into smaller services (e.g., separate Auth and Task services) so each can be scaled independently.
 
-### 5. Additional Improvements
-- **Message Queues**: RabbitMQ/Kafka for async task processing
-- **CDN**: Serve static frontend assets via CloudFront/Cloudflare
-- **Monitoring**: Implement APM tools (New Relic, Datadog) for performance tracking
+### 5. Using a CDN
+Serve frontend static files (HTML, CSS, JS) through a Content Delivery Network to reduce server load and improve load times for users worldwide.
 
 ---
 
 ## 📬 Postman Collection
 
-Import the following endpoints into Postman for testing:
+A Postman collection is included for easy API testing:
 
-### Auth
-- `POST http://localhost:3000/api/auth/signup`
-- `POST http://localhost:3000/api/auth/login`
+📁 **Location:** `Backend/docs/Internship Task.postman_collection.json`
 
-### Tasks
-- `GET http://localhost:3000/api/tasks`
-- `POST http://localhost:3000/api/tasks`
-- `PATCH http://localhost:3000/api/tasks/:id`
-- `DELETE http://localhost:3000/api/tasks/:id`
+### How to Import:
+1. Open Postman
+2. Click **Import** button
+3. Select the JSON file from the `Backend/docs` folder
+4. All endpoints will be available for testing
 
-> 💡 **Tip**: Enable "Credentials" in Postman to send cookies with requests.
+> 💡 **Tip**: Make sure to enable "Send cookies" in Postman settings to maintain authentication across requests.
 
 ---
 
@@ -314,4 +304,4 @@ This project is part of an internship assignment.
 
 ## 👤 Author
 
-Sambhav
+Sambhav Trivedi
