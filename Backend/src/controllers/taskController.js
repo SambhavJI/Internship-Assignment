@@ -64,6 +64,13 @@ const updateTaskStatus = async (req, res) => {
 
         // If it's a user, they can only update status
         if (req.user.role === "user") {
+            const { title, description, assignedToUsername } = req.body;
+
+            // Check if user is trying to update fields other than status
+            if (title !== undefined || description !== undefined || assignedToUsername !== undefined) {
+                return res.status(403).json({ message: "Users can only update the status field" });
+            }
+
             if (status) task.status = status;
         } else {
             // Admin can update everything

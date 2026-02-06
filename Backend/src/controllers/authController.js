@@ -48,7 +48,12 @@ async function login(req, res) {
         return res.status(400).json({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: user._id, username, role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Validate that the provided role matches the user's actual role in the database
+    if (role !== user.role) {
+        return res.status(403).json({ message: "Invalid role for this user" });
+    }
+
+    const token = jwt.sign({ id: user._id, username, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.cookie('token', token, {
         httpOnly: true,
