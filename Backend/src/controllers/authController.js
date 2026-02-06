@@ -61,7 +61,7 @@ async function login(req, res) {
         maxAge: 3600000 // 1 hour
     });
 
-    res.json({ message: "Login successful" });
+    res.json({ message: "Login successful", user: { id: user._id, username: user.username, role: user.role } });
 }
 
 export { signup, login };
