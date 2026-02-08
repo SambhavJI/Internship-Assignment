@@ -5,7 +5,9 @@ import cookieParser from 'cookie-parser';
 import dbConnect from './config/dbConnect.js';
 dotenv.config();
 import authRouter from './routes/authRouter.js';
-import taskRouter from './routes/taskRouter.js';
+import projectRouter from './routes/projectRouter.js';
+import documentRouter from './routes/documentRouter.js';
+import userRouter from './routes/userRouter.js';
 
 const app = express();
 
@@ -18,7 +20,9 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRouter);
-app.use('/api/tasks', taskRouter);
+app.use('/api/projects', projectRouter);
+app.use('/api/documents', documentRouter);
+app.use('/api/users', userRouter);
 
 dbConnect().then(
     () => {

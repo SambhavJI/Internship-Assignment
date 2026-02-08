@@ -5,7 +5,7 @@ function Signup() {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
-        role: 'user',
+        role: 'developer',
     });
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
@@ -23,8 +23,8 @@ function Signup() {
             const response = await axios.post('http://localhost:3000/api/auth/signup', formData, {
                 withCredentials: true,
             });
-            setMessage(`✅ Signup successful! ${response.data.message || 'User created.'}`);
-            setFormData({ username: '', password: '', role: 'user' });
+            setMessage(`✅ ${response.data.message || 'Personnel registered successfully.'}`);
+            setFormData({ username: '', password: '', role: 'developer' });
         } catch (error) {
             setMessage(`❌ Error: ${error.response?.data?.message || error.message}`);
         } finally {
@@ -33,53 +33,60 @@ function Signup() {
     };
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Signup</h2>
+        <div className="space-y-6">
+            <div className="text-center">
+                <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Personnel <span className="text-indigo-500">Registration</span></h2>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-2">Initialize New Nexus Record</p>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Username</label>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Username</label>
                     <input
                         type="text"
                         name="username"
                         value={formData.username}
                         onChange={handleChange}
-                        className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-700"
+                        placeholder="New ID..."
                         required
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Password</label>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Password</label>
                     <input
                         type="password"
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
-                        className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-700"
+                        placeholder="••••••••"
                         required
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Role</label>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Assigned Role</label>
                     <select
                         name="role"
                         value={formData.role}
                         onChange={handleChange}
-                        className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-600 uppercase"
                     >
-                        <option value="user">User</option>
+                        <option value="developer">Developer</option>
+                        <option value="project_lead">Project Lead</option>
                         <option value="admin">Admin</option>
                     </select>
                 </div>
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 disabled:bg-gray-400 transition-colors"
+                    className="w-full bg-slate-800 text-white font-black uppercase tracking-widest py-4 rounded-xl hover:bg-black transition-all shadow-lg active:scale-[0.98] disabled:opacity-50"
                 >
-                    {loading ? 'Signing up...' : 'Signup'}
+                    {loading ? 'Processing...' : 'Register Account'}
                 </button>
             </form>
             {message && (
-                <p className={`mt-4 text-sm ${message.includes('✅') ? 'text-green-600' : 'text-red-600'}`}>
+                <p className={`text-center text-xs font-mono uppercase tracking-tighter ${message.includes('✅') ? 'text-green-600' : 'text-red-500'}`}>
                     {message}
                 </p>
             )}

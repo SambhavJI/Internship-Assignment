@@ -1,47 +1,50 @@
 import { useState } from 'react';
 import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
-import TaskList from './components/Tasks/TaskList';
-import CreateTask from './components/Tasks/CreateTask';
+import ProjectList from './components/Projects/ProjectList';
+import CreateProject from './components/Projects/CreateProject';
+import UserManagement from './components/Admin/UserManagement';
+import AccountSettings from './components/Account/AccountSettings';
 import './App.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState('login');
   const [user, setUser] = useState(null);
-  const [refreshTasks, setRefreshTasks] = useState(0);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleLoginSuccess = (data) => {
     setUser(data.user);
-    setActiveTab('tasks');
+    setActiveTab('projects');
   };
 
-  const handleTaskCreated = () => {
-    setRefreshTasks((prev) => prev + 1);
+  const handleRefresh = () => {
+    setRefreshTrigger((prev) => prev + 1);
   };
 
   const allTabs = [
     { id: 'login', label: 'Login', icon: '🔐' },
-    { id: 'signup', label: 'Signup', icon: '📝' },
-    { id: 'tasks', label: 'Tasks', icon: '📋' },
-    { id: 'create', label: 'Create Task', icon: '➕', adminOnly: true },
+    { id: 'projects', label: 'Projects', icon: '📁' },
+    { id: 'create', label: 'New Project', icon: '➕', roles: ['admin'] },
+    { id: 'users', label: 'User Management', icon: '👥', roles: ['admin'] },
+    { id: 'settings', label: 'Account', icon: '⚙️' },
   ];
 
   // Filter tabs based on user role
-  const tabs = allTabs.filter(tab => !tab.adminOnly || (user && user.role === 'admin'));
+  const tabs = allTabs.filter(tab => !tab.roles || (user && tab.roles.includes(user.role)));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4">
+      <header className="bg-indigo-900 text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-800">
-              🚀 API Testing Dashboard
+            <h1 className="text-2xl font-black tracking-tight">
+              🛠️ PixelForge <span className="text-indigo-300">Nexus</span>
             </h1>
             {user && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">
-                  Logged in as: <strong>{user.username}</strong> ({user.role})
+              <div className="flex items-center gap-4">
+                <span className="bg-indigo-800 px-3 py-1 rounded-full text-xs font-semibold">
+                  {user.username} • <span className="uppercase">{user.role.replace('_', ' ')}</span>
                 </span>
                 <button
                   onClick={() => {
@@ -79,53 +82,52 @@ function App() {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden min-h-[600px]">
           {activeTab === 'login' && (
-            <div className="lg:col-span-1">
+            <div className="p-8 max-w-md mx-auto">
               <Login onLoginSuccess={handleLoginSuccess} />
             </div>
           )}
 
-          {activeTab === 'signup' && (
-            <div className="lg:col-span-1">
-              <Signup />
-            </div>
-          )}
-
-          {activeTab === 'tasks' && (
-            <div className="lg:col-span-2">
-              <TaskList refreshTrigger={refreshTasks} />
+          {activeTab === 'projects' && (
+            <div className="p-8">
+              <ProjectList refreshTrigger={refreshTrigger} user={user} />
             </div>
           )}
 
           {activeTab === 'create' && user && user.role === 'admin' && (
-            <div className="lg:col-span-1">
-              <CreateTask onTaskCreated={handleTaskCreated} />
+            <div className="p-8 max-w-2xl mx-auto">
+              <CreateProject onProjectCreated={handleRefresh} />
+            </div>
+          )}
+
+          {activeTab === 'users' && user && user.role === 'admin' && (
+            <div className="p-8">
+              <UserManagement />
+            </div>
+          )}
+
+          {activeTab === 'settings' && user && (
+            <div className="p-8 max-w-md mx-auto">
+              <AccountSettings user={user} />
             </div>
           )}
         </div>
 
-        {/* API Info */}
-        <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold text-gray-800 mb-3">📡 Available API Endpoints</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <h4 className="font-semibold text-gray-700">Auth Routes:</h4>
-              <ul className="mt-2 space-y-1 text-gray-600">
-                <li><code className="bg-gray-100 px-1 rounded">POST /api/auth/signup</code> - Register user</li>
-                <li><code className="bg-gray-100 px-1 rounded">POST /api/auth/login</code> - Login user</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-700">Task Routes:</h4>
-              <ul className="mt-2 space-y-1 text-gray-600">
-                <li><code className="bg-gray-100 px-1 rounded">GET /api/tasks</code> - Get all tasks</li>
-                <li><code className="bg-gray-100 px-1 rounded">POST /api/tasks</code> - Create task (Admin)</li>
-                <li><code className="bg-gray-100 px-1 rounded">PATCH /api/tasks/:id</code> - Update status</li>
-                <li><code className="bg-gray-100 px-1 rounded">DELETE /api/tasks/:id</code> - Delete (Admin)</li>
-              </ul>
-            </div>
+        {/* System Info */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+            <h4 className="font-bold text-indigo-900 text-sm mb-2">🛡️ Privilege Separation</h4>
+            <p className="text-xs text-gray-500">Access control is enforced at both frontend and backend layers.</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+            <h4 className="font-bold text-indigo-900 text-sm mb-2">📑 Document Control</h4>
+            <p className="text-xs text-gray-500">Only assigned team members can view project-specific documentation.</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+            <h4 className="font-bold text-indigo-900 text-sm mb-2">🔒 Secure Login</h4>
+            <p className="text-xs text-gray-500">Implementing Bcrypt hashing and JWT for session management.</p>
           </div>
         </div>
       </main>

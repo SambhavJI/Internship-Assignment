@@ -20,15 +20,10 @@ async function signup(req, res) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ username, password: hashedPassword, role });
 
-    const token = jwt.sign({ id: newUser._id, username, role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 3600000 // 1 hour
+    res.status(201).json({
+        message: "User registered successfully",
+        user: { id: newUser._id, username: newUser.username, role: newUser.role }
     });
-
-    res.json({ user: newUser });
 }
 
 async function login(req, res) {
